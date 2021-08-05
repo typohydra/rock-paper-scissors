@@ -1,1 +1,1 @@
-Javascript rock paper scissors game.
+Javascript rock paper scissors game with User Interface.
