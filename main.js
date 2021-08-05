@@ -1,12 +1,18 @@
 const playerScore_span = document.querySelector('#player-score');
 const computerScore_span = document.querySelector('#computer-score');
 
+//results text
 const container_div = document.querySelector('#container');
 const buttons = document.querySelectorAll('.btn-choice');
 const roundResult_div = document.createElement('div');
+container_div.appendChild(roundResult_div);
+roundResult_div.style.cssText = "margin: 0 0 30px 0; height: 20px; font-size: 25px; font-weight: bold;";
 
+//restart button
 const restartButton = document.createElement('button');
 restartButton.innerText = "Restart";
+container_div.appendChild(restartButton);
+restartButton.style.cssText = "padding: 5px 15px; margin: 35px 0 10px 0; color: #ffd166; font-weight: bold; background-color: #ef476f; border-radius: 10px; border-color: #ef476f;";
 restartButton.addEventListener('click', () => window.location.reload());
 
 // keep track of scores
@@ -60,10 +66,9 @@ function checkScores(roundResult, playerSelection, computerSelection) {
                 roundResult_div.innerText = "Final Result: Computer Wins";
             }
         }
+        roundResult_div.style.cssText = "margin: 0 0 30px 0; height: 20px; font-size: 25px; font-weight: bolder; color: #ef476f;";
 //disable buttons(until restart is clicked) when one player reaches 5 pts        
         buttons.forEach( (button) => {button.disabled = true})
-//restart button
-        container_div.appendChild(restartButton);
     }
 }
 
@@ -82,5 +87,4 @@ function updateRunningScore(roundResult, playerSelection, computerSelection)
     else {
         roundResult_div.innerText = `It's a Draw, You both chose ${playerSelection}`;
     }
-    container_div.appendChild(roundResult_div);
 }
