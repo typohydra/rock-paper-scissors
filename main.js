@@ -1,3 +1,25 @@
+const playerScore_span = document.querySelector('#player-score');
+const computerScore_span = document.querySelector('#computer-score');
+
+const container_div = document.querySelector('#container');
+const buttons = document.querySelectorAll('.btn-choice');
+const roundResult_div = document.createElement('div');
+
+const restartButton = document.createElement('button');
+restartButton.innerText = "Restart";
+restartButton.addEventListener('click', () => window.location.reload());
+
+// keep track of scores
+let playerScore = 0;
+let computerScore = 0;
+
+buttons.forEach( button => {
+    button.addEventListener('click', () => {
+        const playerSelection = (button.innerText).toLowerCase();
+        playSingleRound(playerSelection, computerPlay());
+    })
+})
+
 function computerPlay() {
     let randomIntegerNumber = Math.floor(Math.random() * 3); //range [0, 2]
     if(randomIntegerNumber === 0) return "rock";
@@ -5,60 +27,60 @@ function computerPlay() {
     else return "scissors";
 }
 
-//validate that input is correct (rock, paper or scissors)
-function inputValidation(input) {
-    if(input !== "rock" && input !== "paper" && input !== "scissors") {return true;}
-    return false;
-}
-
 function playSingleRound(playerSelection, computerSelection) {
+    let roundResult;
     if (playerSelection === computerSelection) {
-        return `It's a Draw, You both choose ${playerSelection}`;
+        roundResult = 'draw';
     }
     else if( playerSelection === "rock" && computerSelection === "scissors" ||
-        playerSelection === "scissors" && computerSelection === "paper" ||
-        playerSelection === "paper" && computerSelection === "rock"
-    ) { 
-        return `You Won! ${playerSelection} beats ${computerSelection}`; 
+             playerSelection === "scissors" && computerSelection === "paper" ||
+             playerSelection === "paper" && computerSelection === "rock") { 
+        roundResult = 'player wins';
     }
     else { 
-        return `You Lose! ${computerSelection} beats ${playerSelection}`; 
+        roundResult = 'computer wins';
+    }
+
+    checkScores(roundResult, playerSelection, computerSelection);
+}
+
+function checkScores(roundResult, playerSelection, computerSelection) {
+    if(playerScore < 5 && computerScore < 5 ) {
+        updateRunningScore(roundResult, playerSelection, computerSelection); //change running score
+    }
+    if(playerScore === 5 || computerScore === 5) {
+        if(playerScore === computerScore) {
+            roundResult_div.innerText = "Final Result: It's a Draw";
+        }
+        else {
+            if(playerScore === 5) {
+                roundResult_div.innerText = "Final Result: You Win";
+            }
+            else {
+                roundResult_div.innerText = "Final Result: Computer Wins";
+            }
+        }
+//disable buttons(until restart is clicked) when one player reaches 5 pts        
+        buttons.forEach( (button) => {button.disabled = true})
+//restart button
+        container_div.appendChild(restartButton);
     }
 }
 
-
-function game()
+function updateRunningScore(roundResult, playerSelection, computerSelection)
 {
-    let playerScore = 0;
-    let computerScore = 0;
-
-    // 5 rounds
-    for(let i=1; i<6; i++) 
-    {
-        let playerMove = prompt("Type Your Move: rock, paper or scissors");
-        playerMove.toLowerCase();
-        if  (inputValidation(playerMove)) 
-        {
-            console.log("ERROR: Invalid Input! Make sure you spell correctly.");
-            return;
-        }
-
-        let singleRoundScore = playSingleRound(playerMove, computerPlay());
-        console.log(`Round ${i}: ${singleRoundScore}.`)
-
-        if(singleRoundScore.slice(0, 7) === "You Won") playerScore++;
-        else if(singleRoundScore.slice(0, 8) === "You Lose") computerScore++;
-        else continue; // It's a draw
+    if(roundResult === "player wins") {
+        playerScore++
+        playerScore_span.innerText = playerScore; // update running score display
+        roundResult_div.innerText = `You Won! ${playerSelection} beats ${computerSelection}`;
     }
-
-    // Final results
-    if(playerScore == computerScore) { return "It's a Draw"}
-    else if(playerScore > computerScore) { 
-        return `You won the Game!
-        Final Scores: player -> ${playerScore} and computer -> ${computerScore}`;
+    else if(roundResult === "computer wins") {
+        computerScore++;
+        computerScore_span.innerText = computerScore; // update running score display
+        roundResult_div.innerText = `You Lose! ${computerSelection} beats ${playerSelection}`
     }
-    else { // computer wins
-        return `You Lose the Game!
-        Final Scores: player -> ${playerScore} and computer -> ${computerScore}`;
+    else {
+        roundResult_div.innerText = `It's a Draw, You both chose ${playerSelection}`;
     }
+    container_div.appendChild(roundResult_div);
 }
